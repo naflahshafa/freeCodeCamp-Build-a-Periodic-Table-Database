@@ -1,12 +1,14 @@
 #!/bin/bash
 PSQL="psql --username=freecodecamp --dbname=periodic_table -t --no-align -c"
 
+# Check for missing argument
 if [[ -z $1 ]]
 then
   echo "Please provide an element as an argument."
   exit
 fi
 
+# Query by atomic number, symbol, or name
 if [[ $1 =~ ^[0-9]+$ ]]
 then
   CONDITION="atomic_number = $1"
@@ -16,6 +18,7 @@ fi
 
 RESULT=$($PSQL "SELECT atomic_number, name, symbol, type, atomic_mass, melting_point_celsius, boiling_point_celsius FROM elements JOIN properties USING(atomic_number) JOIN types USING(type_id) WHERE $CONDITION")
 
+# Print output and handle element not found
 if [[ -z $RESULT ]]
 then
   echo "I could not find that element in the database."
